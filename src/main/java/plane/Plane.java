@@ -4,6 +4,9 @@ import java.util.Scanner;
 
 public class Plane implements Flyable {
 
+   public double totalFirePotential;
+   public int flightRange;
+
    public Plane() { }
 
 
@@ -16,6 +19,8 @@ public class Plane implements Flyable {
 
 
       // DIRECTION
+      System.out.println("Plane has took off");
+
       System.out.println("Choose direction (N - north, S - south, E - east, W - west):");
       char direction = 0 ;
       boolean isDirection = false ;
@@ -24,10 +29,9 @@ public class Plane implements Flyable {
          if( func.isDirection(direction) ){
             isDirection = true ;
          } else {
-            System.out.println("Input correct direction: ");
+            System.out.println("Choose correct direction: ");
          }
       } while (!isDirection) ;
-      System.out.print(direction);
 
 
       // TARGET
@@ -53,15 +57,44 @@ public class Plane implements Flyable {
           targetArmor = target1.getArmor() ;
 
       // plane
-      double rndPlaneWeight = func.getPlaneWeight("") ,
-          totalFirePotential = ( ammo.getRocketsCount() * Constants.ROCKET_KOF ) + ammo.getBulletsCount() ;
-      int flightHight = func.getFlightParams(rndPlaneWeight)[0] ,
-          flightRange = func.getFlightParams(rndPlaneWeight)[1] ;
+      double rndPlaneWeight = func.getPlaneWeight("");
+      this.totalFirePotential = ( ammo.getRocketsCount() * Constants.ROCKET_KOF ) + ammo.getBulletsCount() ;
+      int flightHight = func.getFlightParams(rndPlaneWeight)[0] ;
+      this.flightRange = func.getFlightParams(rndPlaneWeight)[1] ;
+
+      // Attack?
+      if ( (targetDistance <= this.flightRange) && (targetArmor <= this.totalFirePotential) ){
+         // Operation Description
+         func.getOperationDescription( targetDistance, targetArmor, ammo, this.totalFirePotential, rndPlaneWeight, flightHight, this.flightRange );
+         System.out.println("We're ready to strike. Attack? (y/n)");
+
+         String attackReply ;
+         boolean isAttackReply;
+         do{
+            attackReply = scan.nextLine() ;
+            if(attackReply.equalsIgnoreCase("y") || attackReply.equalsIgnoreCase("n")){
+               isAttackReply = true ;
+            } else {
+               System.out.println("Wrong choice. Y or N: ");
+               isAttackReply = false ;
+            }
+         } while (!isAttackReply);
+
+         // YES, ATTACK!
+         if( attackReply.equalsIgnoreCase("y") ){
+            // Operation Process
+            func.processOperation(totalFirePotential, targetArmor, flightRange, targetDistance);
+            this.totalFirePotential -= targetArmor ;
+            this.flightRange -= targetDistance ;
 
 
-      func.getOperationDescription( targetDistance, targetArmor, ammo, totalFirePotential, rndPlaneWeight, flightHight, flightRange ); ;
 
-      func.processOperation(totalFirePotential, targetArmor, flightRange, targetDistance);
+         } else {
+            func.sayBye();
+         }
+
+      }
+
 
    }
 

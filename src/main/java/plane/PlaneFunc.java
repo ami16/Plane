@@ -85,20 +85,20 @@ public class PlaneFunc {
       Random rnd = new Random() ;
 
       if(totalWeight <= 11993){
-         arr[0] = rnd.nextInt((4000-3360)+1)+3360 ;            // height  * 4000 - 3360 (h)
-         arr[1] = rnd.nextInt((1500-1260)+1)+1260 + plusKm ;   // range * 1500 - 1260
+         arr[0] = rnd.nextInt((4000-3360)+1)+3360 ;            // height  : 4000 - 3360 (h)
+         arr[1] = rnd.nextInt((1500-1260)+1)+1260 + plusKm ;   // range : 1500 - 1260
       } else if(totalWeight <= 12126){
-         arr[0] = rnd.nextInt((3360-2720)+1)+2720 ;            //height * 3360 - 2720 (h)
-         arr[1] = rnd.nextInt((1260-1020)+1)+1020  + plusKm;   // range * 1260 - 1020
+         arr[0] = rnd.nextInt((3360-2720)+1)+2720 ;            //height : 3360 - 2720 (h)
+         arr[1] = rnd.nextInt((1260-1020)+1)+1020  + plusKm;   // range : 1260 - 1020
       } else if(totalWeight <= 12259){
-         arr[0] = rnd.nextInt((2720-2080)+1)+2080 ;            // height * 2720 - 2080 (h)
-         arr[1] = rnd.nextInt((1020-780)+1)+780  + plusKm;     // range * 1020 - 780
+         arr[0] = rnd.nextInt((2720-2080)+1)+2080 ;            // height : 2720 - 2080 (h)
+         arr[1] = rnd.nextInt((1020-780)+1)+780  + plusKm;     // range : 1020 - 780
       } else if(totalWeight <= 12392){
-         arr[0] = rnd.nextInt((2080-1440)+1)+1440 ;            // height * 2080 - 1440 (h)
-         arr[1] = rnd.nextInt((780-540)+1)+540 + plusKm ;      // range * 780 - 540
+         arr[0] = rnd.nextInt((2080-1440)+1)+1440 ;            // height : 2080 - 1440 (h)
+         arr[1] = rnd.nextInt((780-540)+1)+540 + plusKm ;      // range : 780 - 540
       } else if(totalWeight <= 12650){
-         arr[0] = rnd.nextInt((1440-800)+1)+800 ;              // height * 1440 - 800 (h)
-         arr[1] = rnd.nextInt((540-300)+1)+300  + plusKm;      // range * 540 - 300
+         arr[0] = rnd.nextInt((1440-800)+1)+800 ;              // height : 1440 - 800 (h)
+         arr[1] = rnd.nextInt((540-300)+1)+300  + plusKm;      // range : 540 - 300
       }
       return arr ;
    }
@@ -153,4 +153,8 @@ public class PlaneFunc {
       System.out.println( "Stealth was active for: " + ( (double)(end_time - start_time)/1000 ) + " sec. (1.5 - 3.4) \n>-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->--> \n" );
    }
 
+
+   public void sayBye(){
+      System.out.println("Ok, see ya.");
+   }
 }

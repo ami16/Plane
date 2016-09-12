@@ -10,8 +10,8 @@ import static plane.Constants.TARGET_MAX_DISTANCE ;
 
 public class Target {
 
-   private int distance;    // 300-1500
-   private int armor;          // 260-470-680
+   private int distance;      // 300-1500
+   private int armor;         // 260-470-680
 
    public Target(char loc) {
       Random rnd = new Random() ;
@@ -27,4 +27,5 @@ public class Target {
    public int getArmor() {
       return armor;
    }
+
 }
