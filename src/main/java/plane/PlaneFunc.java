@@ -24,29 +24,10 @@ import static plane.Constants.SHOTGUN_WEIGHT ;
 
 public class PlaneFunc {
 
-   public boolean isDirection(char dir){
-      boolean is = false ;
-      switch ( Character.toLowerCase(dir) ){
-         case 'n' :case 's' :case 'e':case 'w':
-            is = true ;
-            break;
-      }
-      return is;
-   }
-
    public boolean isTarget(char tar){
       boolean is = false ;
       switch (tar){
          case '1' :case '2' :case '3':
-            is = true ; break;
-      }
-      return is;
-   }
-
-   public boolean isYN(char yn){
-      boolean is = false ;
-      switch ( Character.toLowerCase(yn) ){
-         case 'y' :case 'n':
             is = true ; break;
       }
       return is;
@@ -149,12 +130,12 @@ public class PlaneFunc {
    }
 
 
-   public char checkYN(Scanner scan){
+   public char checkYN( Scanner scan ){
       char reply ;
       boolean is = false;
       do{
          reply = scan.next().charAt(0) ;
-         if( isYN(reply) ){
+         if( Character.toLowerCase(reply) == 'y' || Character.toLowerCase(reply) == 'n' ){
             is = true ;
          } else {
             System.out.println("Wrong choice. Might be Y or N: ");
@@ -169,11 +150,12 @@ public class PlaneFunc {
       boolean is = false ;
       do {
          direction = scan.next().charAt(0) ;
-         if( this.isDirection(direction) ){
-            is = true ;
-         } else {
-            System.out.println("Choose correct direction: ");
+         switch ( Character.toLowerCase(direction) ){
+            case 'n' :case 's' :case 'e':case 'w':
+               is = true ;
+               break;
          }
+         System.out.println("Choose correct direction: ");
       } while ( !is ) ;
       return direction ;
    }
@@ -191,6 +173,11 @@ public class PlaneFunc {
          }
       } while ( !isTarget ) ;
       return target ;
+   }
+
+
+   public boolean checkFightResources( Plane pl, Target target ){
+      return (target.getDistance() <= pl.getFlightRange()) && (target.getArmor() <= pl.getTotalFirePotential()) ;
    }
 
 

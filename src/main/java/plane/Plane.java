@@ -4,11 +4,18 @@ import java.util.Scanner;
 
 public class Plane implements Flyable {
 
-   public double totalFirePotential;
-   public int flightRange;
+   private double totalFirePotential;
+   private int flightRange;
 
    public Plane() { }
 
+   public double getTotalFirePotential() {
+      return totalFirePotential;
+   }
+
+   public int getFlightRange() {
+      return flightRange;
+   }
 
    public void fly(){
 
@@ -33,9 +40,9 @@ public class Plane implements Flyable {
       *  Make some random target yet
       * -----------------------------*/
       // target
-      Target target1 = new Target(target) ;
-      int targetDistance = target1.getDistance() ,
-          targetArmor = target1.getArmor() ;
+      Target tgt = new Target(target) ;
+      int targetDistance = tgt.getDistance() ,
+          targetArmor = tgt.getArmor() ;
 
       // plane
       double rndPlaneWeight = func.getPlaneWeight("");
@@ -43,13 +50,16 @@ public class Plane implements Flyable {
       int flightHight = func.getFlightParams(rndPlaneWeight)[0] ;
       this.flightRange = func.getFlightParams(rndPlaneWeight)[1] ;
 
+
+
       // ???
       // Attack?
-      if ( (targetDistance <= this.flightRange) && (targetArmor <= this.totalFirePotential) ){
+      if( func.checkFightResources(this, tgt) ){
+
          // Operation Description
          func.getOperationDescription( targetDistance, targetArmor, ammo, this.totalFirePotential, rndPlaneWeight, flightHight, this.flightRange );
 
-         System.out.println("We're ready to strike. Attack? (y/n)");
+         System.out.println("Plain's ready to strike. Attack? (y/n)");
          // Y/N
          char attackReply = func.checkYN(scan) ;
 
@@ -66,22 +76,21 @@ public class Plane implements Flyable {
             // Y/N
             char searchMoreReply = func.checkYN(scan);
 
-
             System.out.println( searchMoreReply + ". exit");
 
-            // CHECK distance again
-//            if(){
-//
-//            }
 
          } else {
             func.sayBye();
          }
 
       } else {
-         System.out.println("Not enough fight resources: ");
+         System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-");
+         System.out.println("        NOT ENOUGH FIGHT RESOURCES          ");
+         System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-");
          func.getOperationDescription( targetDistance, targetArmor, ammo, this.totalFirePotential, rndPlaneWeight, flightHight, this.flightRange );
       }
+
+
 
 
    }
