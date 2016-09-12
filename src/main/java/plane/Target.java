@@ -17,7 +17,8 @@ public class Target {
       Random rnd = new Random() ;
 
       distance = rnd.nextInt((TARGET_MAX_DISTANCE - TARGET_MIN_DISTANCE)+1) + TARGET_MIN_DISTANCE ;
-      armor = rnd.nextInt((TARGET_MAX_ARMOR - TARGET_MIN_ARMOR)+1) + TARGET_MIN_ARMOR ;
+//      armor = rnd.nextInt((TARGET_MAX_ARMOR - TARGET_MIN_ARMOR)+1) + TARGET_MIN_ARMOR ;
+      armor = 50 ;
    }
 
    public int getDistance() {

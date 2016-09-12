@@ -45,6 +45,7 @@ public class PlaneFunc {
    }
 
 
+
    public double getPlaneWeight(String min_max){
 
       double totalWeight = 0 ;
@@ -96,19 +97,19 @@ public class PlaneFunc {
 
 
    public void getOperationDescription( int targetDistance, int targetArmor, Ammo ammo, double totalFirePotential, double rndPlaneWeight, int flightHight, int flightRange ){
-      System.out.print("Target: \nDistance (300-1500): " + targetDistance + " km, ");
+      System.out.print("Target: Distance (300-1500): " + targetDistance + " km, ");
       System.out.println("Armor (260-680): " + targetArmor + " FP \n-------------------------------------------------------------");
 
       String out = "rockets: " + ammo.getRocketsCount() + " ( = " + ammo.getRocketsCount() * ROCKET_KOF + " blts), " +
-          "bullets: " + ammo.getBulletsCount()  + ", \nTOTAL FIRE potential: " + totalFirePotential + " FP";
-      System.out.println("PLANE: \nWEAPONS: " + out);
-      System.out.println( "Weight: " + rndPlaneWeight + " kg, " );
-      System.out.println( "FLIGHT params: Height = " + flightHight + " m, flight range = " + flightRange + " km\n" );
+          "bullets: " + ammo.getBulletsCount()  + ", TOTAL FIRE potential: " + totalFirePotential + " FP";
+      System.out.println("PLANE WEAPONRY: " + out);
+      System.out.println( "PLANE Weight: " + rndPlaneWeight + " kg, " );
+      System.out.println( "FLIGHT Height = " + flightHight + " m, FLIGHT Range = " + flightRange + " km\n" );
 
    }
 
 
-   public void processOperation(double totalFirePotential, int targetArmor, int flightRange, int targetDistance){
+   public void processOperation(Ammo ammo, double totalFirePotential, int targetArmor, int flightRange, int targetDistance){
       if( totalFirePotential < targetArmor  ){
          System.out.print("Target is too strong! ");
          if( flightRange > targetDistance*2 ){
@@ -117,17 +118,32 @@ public class PlaneFunc {
             System.out.println("And there would be no way to turn back. Quit operation.");
          }
       } else if( totalFirePotential > targetArmor ){
+
          if( flightRange > targetDistance && flightRange < targetDistance*2){
             System.out.println("TARGET DESTROYED! But plane had NOT came back... Lacked " + (targetDistance*2-flightRange) + " km" );
+
+            // take needed ammo amount away
+//            this.useAmmo(ammo) ;
+            System.out.println("take needed ammo amount away 1");
+
          } else if( flightRange > targetDistance*2 ){
             this.stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
-//            System.out.println("TARGET DESTROYED! And Plane is SAVED back home.");
             System.out.println("TARGET DESTROYED!");
-         } else {
+
+            // take needed ammo amount away
+            System.out.println("take needed ammo amount away 2");
+
+         }
+         else {
             System.out.println("Target could be destroyed, but plane's lacking of flight resources... Quit operation.");
          }
       }
    }
+
+
+//   public Ammo useAmmo( Ammo ammo ){
+//
+//   }
 
 
    public char checkYN( Scanner scan ){
@@ -154,14 +170,16 @@ public class PlaneFunc {
             case 'n' :case 's' :case 'e':case 'w':
                is = true ;
                break;
+            default:
+               System.out.println("Choose correct direction: ");
+               is = false;
          }
-         System.out.println("Choose correct direction: ");
       } while ( !is ) ;
       return direction ;
    }
 
 
-   public char getTarget( Scanner scan, char direction ){
+   public char chooseTarget( Scanner scan, char direction ){
       char target = 0 ;
       boolean isTarget = false ;
       do {
@@ -174,6 +192,11 @@ public class PlaneFunc {
       } while ( !isTarget ) ;
       return target ;
    }
+
+//   public Target getTargetObj( char tgt ){
+//      Target targetObj = new Target( tgt ) ;
+//      return new Target( tgt ) ;
+//   }
 
 
    public boolean checkFightResources( Plane pl, Target target ){
@@ -198,6 +221,9 @@ public class PlaneFunc {
 
 
    public void sayBye(){
-      System.out.println("Ok, see ya.");
+      System.out.println("Ok, see ya... :)");
+   }
+   public void sayReturning(){
+      System.out.println("Plane returns back home");
    }
 }
