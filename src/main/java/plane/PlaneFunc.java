@@ -112,7 +112,7 @@ public class PlaneFunc {
    public void processOperation(Ammo ammo, double totalFirePotential, int targetArmor, int flightRange, int targetDistance){
       if( totalFirePotential < targetArmor  ){
          System.out.print("Target is too strong! ");
-         if( flightRange > targetDistance*2 ){
+         if( flightRange >= targetDistance*2 ){
             System.out.print("Turning back. ");
          } else {
             System.out.println("And there would be no way to turn back. Quit operation.");
@@ -125,8 +125,9 @@ public class PlaneFunc {
             // take needed ammo amount away
 //            this.useAmmo(ammo) ;
             System.out.println("take needed ammo amount away 1");
-            ammo.setRocketsCount(0);
-            ammo.setBulletsCount(51);
+//            ammo.setRocketsCount(0);
+//            ammo.setBulletsCount(51);
+            this.useAmmo(targetArmor, ammo);
 
          } else if( flightRange > targetDistance*2 ){
             this.stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
@@ -134,20 +135,36 @@ public class PlaneFunc {
 
             // take needed ammo amount away
             System.out.println("take needed ammo amount away 2");
-            ammo.setRocketsCount(0);
-            ammo.setBulletsCount(51);
+//            ammo.setRocketsCount(0);
+//            ammo.setBulletsCount(51);
+            this.useAmmo(targetArmor, ammo);
 
          }
          else {
-            System.out.println("Target could be destroyed, but plane's lacking of flight resources... Quit operation.");
+            System.out.println("Target could be destroyed, but plane's lacking of flight resources... Cancel operation.");
          }
       }
    }
 
 
-//   public Ammo useAmmo( Ammo ammo ){
-//
-//   }
+//   public double useAmmo( int targetArmor, Ammo ammo ){
+   public void useAmmo( int targetArmor, Ammo ammo ){
+      // 260-680 (Armor min-max)
+      int neededRockets = (int) Math.round(targetArmor/ROCKET_KOF - 0.5) ;
+      System.out.println("neededRockets: " + neededRockets);
+      System.out.println("targetArmor: " + targetArmor);
+
+//      if( targetArmor >= neededRockets * ROCKET_KOF ){
+      if( targetArmor >= ammo.getRocketsCount() * ROCKET_KOF ){
+         ammo.setRocketsCount(999);
+      } else if( targetArmor < neededRockets * ROCKET_KOF ){
+         ammo.setRocketsCount( ammo.getRocketsCount() - neededRockets );
+      }
+      double targetArmorRemainder = targetArmor - ammo.getRocketsCount() * ROCKET_KOF;
+
+      ammo.setBulletsCount( ammo.getBulletsCount() - targetArmorRemainder );
+
+   }
 
 
    public char checkYN( Scanner scan ){
