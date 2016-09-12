@@ -1,6 +1,7 @@
 package plane;
 
 import java.util.Random;
+import java.util.Scanner;
 
 import static plane.Constants.PLANE_WEIGHT ;
 import static plane.Constants.MIN_STEALTH_TIME ;
@@ -22,8 +23,6 @@ import static plane.Constants.SHOTGUN_WEIGHT ;
 
 
 public class PlaneFunc {
-   public PlaneFunc() {
-   }
 
    public boolean isDirection(char dir){
       boolean is = false ;
@@ -35,6 +34,25 @@ public class PlaneFunc {
       return is;
    }
 
+   public boolean isTarget(char tar){
+      boolean is = false ;
+      switch (tar){
+         case '1' :case '2' :case '3':
+            is = true ; break;
+      }
+      return is;
+   }
+
+   public boolean isYN(char yn){
+      boolean is = false ;
+      switch ( Character.toLowerCase(yn) ){
+         case 'y' :case 'n':
+            is = true ; break;
+      }
+      return is;
+   }
+
+
    // Not created yet. Random used instead
    public String getTargetsFromDirection(char dir){
       // N
@@ -45,14 +63,6 @@ public class PlaneFunc {
       return "" ;
    }
 
-   public boolean isTarget(char tar){
-      boolean is = false ;
-      switch (tar){
-         case '1' :case '2' :case '3':
-            is = true ; break;
-      }
-      return is;
-   }
 
    public double getPlaneWeight(String min_max){
 
@@ -130,11 +140,57 @@ public class PlaneFunc {
             System.out.println("TARGET DESTROYED! But plane had NOT came back... Lacked " + (targetDistance*2-flightRange) + " km" );
          } else if( flightRange > targetDistance*2 ){
             this.stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
-            System.out.println("TARGET DESTROYED! And Plane is SAVED back home.");
+//            System.out.println("TARGET DESTROYED! And Plane is SAVED back home.");
+            System.out.println("TARGET DESTROYED!");
          } else {
             System.out.println("Target could be destroyed, but plane's lacking of flight resources... Quit operation.");
          }
       }
+   }
+
+
+   public char checkYN(Scanner scan){
+      char reply ;
+      boolean is = false;
+      do{
+         reply = scan.next().charAt(0) ;
+         if( isYN(reply) ){
+            is = true ;
+         } else {
+            System.out.println("Wrong choice. Might be Y or N: ");
+         }
+      } while (!is);
+      return reply ;
+   }
+
+
+   public char getDirection( Scanner scan ){
+      char direction = 0 ;
+      boolean is = false ;
+      do {
+         direction = scan.next().charAt(0) ;
+         if( this.isDirection(direction) ){
+            is = true ;
+         } else {
+            System.out.println("Choose correct direction: ");
+         }
+      } while ( !is ) ;
+      return direction ;
+   }
+
+
+   public char getTarget( Scanner scan, char direction ){
+      char target = 0 ;
+      boolean isTarget = false ;
+      do {
+         target = scan.next().charAt(0) ;
+         if( this.isTarget(target) ){
+            isTarget = true ;
+         } else {
+            System.out.println("Make correct choice (1, 2 or 3): ");
+         }
+      } while ( !isTarget ) ;
+      return target ;
    }
 
 
