@@ -7,6 +7,7 @@ public class Plane implements Flyable {
    private double planeWeight ;
    private double totalFirePotential;
    private int flightRange;
+   private int flightHeight;
    private char direction ;
    private boolean inAction = false ;
    private Ammo ammo ;
@@ -15,11 +16,11 @@ public class Plane implements Flyable {
 
    public double  getTotalFirePotential() { return totalFirePotential; }
    public int     getFlightRange() { return flightRange; }
-//   public char    getDirection() { return direction; }
-//   public double  getPlaneWeight() { return planeWeight; }
+   public int     getFlightHeight() { return flightHeight; }
+   public char    getDirection() { return direction; }
+   public double  getPlaneWeight() { return planeWeight; }
 
-
-   public void setAmmo(Ammo ammo) { this.ammo = ammo; }
+   public void    setAmmo(Ammo ammo) { this.ammo = ammo; }
 
 
    public void fly(){
@@ -27,8 +28,8 @@ public class Plane implements Flyable {
       PlaneFunc func = new PlaneFunc() ;
       Scanner scan = new Scanner(System.in) ;
 
-//      Ammo ammo = new Ammo() ;
-      ammo = new Ammo() ;
+      if( !this.inAction )
+         ammo = new Ammo() ;
 
       System.out.println("\n>-->    Plane has took off    >-->\n");
 
@@ -58,13 +59,15 @@ public class Plane implements Flyable {
                 targetArmor = tgt.getArmor();
 
             // <---- PLANE ---->
-            if( !this.inAction ){
-               this.planeWeight = func.getPlaneWeight("");
-               this.totalFirePotential = (ammo.getRocketsCount() * Constants.ROCKET_KOF) + ammo.getBulletsCount();
-            } else {
-               this.planeWeight = Math.round(this.planeWeight * 0.97);
-            }
-            int flightHight = func.getFlightParams(this.planeWeight)[0];
+            this.planeWeight = func.getPlaneWeight("");
+            this.totalFirePotential = (ammo.getRocketsCount() * Constants.ROCKET_KOF) + ammo.getBulletsCount();
+//            if( !this.inAction ){
+//               this.planeWeight = func.getPlaneWeight("");
+//               this.totalFirePotential = (ammo.getRocketsCount() * Constants.ROCKET_KOF) + ammo.getBulletsCount();
+//            } else {
+//               this.planeWeight = Math.round(this.planeWeight * 0.97);
+//            }
+            this.flightHeight = func.getFlightParams(this.planeWeight)[0];
             this.flightRange = func.getFlightParams(this.planeWeight)[1];
 
 
@@ -73,7 +76,7 @@ public class Plane implements Flyable {
             if (func.checkFightResources(this, tgt)) {
 
                // Operation Description
-               func.getOperationDescription(targetDistance, targetArmor, ammo, this.totalFirePotential, this.planeWeight, flightHight, this.flightRange);
+               func.getOperationDescription(targetDistance, targetArmor, ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
 
                System.out.println("Plain's ready to strike. Attack? (y/n)");
                // Y/N
@@ -113,7 +116,7 @@ public class Plane implements Flyable {
                System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-");
                System.out.println("        NOT ENOUGH FIGHT RESOURCES          ");
                System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-");
-               func.getOperationDescription(targetDistance, targetArmor, ammo, this.totalFirePotential, planeWeight, flightHight, this.flightRange);
+               func.getOperationDescription(targetDistance, targetArmor, ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
                func.sayReturning();
                break;
             }

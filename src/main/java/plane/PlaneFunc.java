@@ -125,6 +125,8 @@ public class PlaneFunc {
             // take needed ammo amount away
 //            this.useAmmo(ammo) ;
             System.out.println("take needed ammo amount away 1");
+            ammo.setRocketsCount(0);
+            ammo.setBulletsCount(51);
 
          } else if( flightRange > targetDistance*2 ){
             this.stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
@@ -132,6 +134,8 @@ public class PlaneFunc {
 
             // take needed ammo amount away
             System.out.println("take needed ammo amount away 2");
+            ammo.setRocketsCount(0);
+            ammo.setBulletsCount(51);
 
          }
          else {

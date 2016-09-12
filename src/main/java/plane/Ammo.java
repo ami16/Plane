@@ -19,11 +19,9 @@ public class Ammo {
       this.bulletsCount = rnd.nextInt ((MAX_BULLETS - MIN_BULLETS) + 1) + MIN_BULLETS;
    }
 
-   public double getRocketsCount() {
-      return rocketsCount;
-   }
+   public double getRocketsCount() { return rocketsCount; }
+   public double getBulletsCount() { return bulletsCount; }
 
-   public double getBulletsCount() {
-      return bulletsCount;
-   }
+   public void setRocketsCount(double rocketsCount) { this.rocketsCount = rocketsCount; }
+   public void setBulletsCount(double bulletsCount) { this.bulletsCount = bulletsCount; }
 }
