@@ -16,11 +16,13 @@ public class Plane implements Flyable {
 
    public double  getTotalFirePotential() { return totalFirePotential; }
    public int     getFlightRange() { return flightRange; }
-   public int     getFlightHeight() { return flightHeight; }
-   public char    getDirection() { return direction; }
-   public double  getPlaneWeight() { return planeWeight; }
+   public void    setFlightRange(int flightRange) { this.flightRange = flightRange; }
 
-   public void    setAmmo(Ammo ammo) { this.ammo = ammo; }
+//   public int     getFlightHeight() { return flightHeight; }
+//   public char    getDirection() { return direction; }
+//   public double  getPlaneWeight() { return planeWeight; }
+//   public void    setAmmoBullets(int bullets) { this.ammo.setBulletsCount(bullets); }
+//   public void    setAmmoRockets(int rockets) { this.ammo.setRocketsCount(rockets); }
 
 
    public void fly(){
@@ -29,7 +31,7 @@ public class Plane implements Flyable {
       Scanner scan = new Scanner(System.in) ;
 
       if( !this.inAction )
-         ammo = new Ammo() ;
+         this.ammo = new Ammo() ;
 
       System.out.println("\n>-->    Plane has took off    >-->\n");
 
@@ -40,9 +42,10 @@ public class Plane implements Flyable {
 
       // Search 4 TARGET?
       System.out.println("Search for target? (y/n) ");
-      char searchForTarget = func.checkYN(scan) ;
+      String searchForTarget = func.checkYN(scan).trim() ;
 
-      if( searchForTarget == 'y' ){
+
+      if( searchForTarget.equalsIgnoreCase("y") ){
 
 
          while (true) {
@@ -58,17 +61,15 @@ public class Plane implements Flyable {
             int targetDistance = tgt.getDistance(),
                 targetArmor = tgt.getArmor();
 
+
             // <---- PLANE ---->
-            this.planeWeight = func.getPlaneWeight("");
-            this.totalFirePotential = (ammo.getRocketsCount() * Constants.ROCKET_KOF) + ammo.getBulletsCount();
-//            if( !this.inAction ){
-//               this.planeWeight = func.getPlaneWeight("");
-//               this.totalFirePotential = (ammo.getRocketsCount() * Constants.ROCKET_KOF) + ammo.getBulletsCount();
-//            } else {
-//               this.planeWeight = Math.round(this.planeWeight * 0.97);
-//            }
+
+            this.planeWeight = func.getPlaneWeight("", this.ammo);
+
+            this.totalFirePotential = (this.ammo.getRocketsCount() * Constants.ROCKET_KOF) + this.ammo.getBulletsCount();
             this.flightHeight = func.getFlightParams(this.planeWeight)[0];
-            this.flightRange = func.getFlightParams(this.planeWeight)[1];
+            if( !this.inAction )
+               this.flightRange = func.getFlightParams(this.planeWeight)[1];
 
 
             // ???
@@ -76,32 +77,30 @@ public class Plane implements Flyable {
             if (func.checkFightResources(this, tgt)) {
 
                // Operation Description
-               func.getOperationDescription(targetDistance, targetArmor, ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
+               func.getOperationDescription(targetDistance, targetArmor, this.ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
 
                System.out.println("Plain's ready to strike. Attack? (y/n)");
                // Y/N
-               char attackReply = func.checkYN(scan);
+               String attackReply = func.checkYN(scan).trim();
 
                // YES, ATTACK!
-               if (attackReply == 'y') {
+               if (attackReply.equalsIgnoreCase("y") ) {
                   // Operation Process
-                  func.processOperation(ammo, this.totalFirePotential, targetArmor, this.flightRange, targetDistance);
+                  func.processOperation(this.ammo, this.totalFirePotential, targetArmor, this.flightRange, targetDistance, this);
 
                   this.inAction = true ;
-                  this.totalFirePotential -= targetArmor;
-                  this.flightRange -= targetDistance;
 
                   // ???
                   // Search for more targets?
                   System.out.println("Search for more targets? (y/n)");
                   // Y/N
-                  char searchMoreReply = func.checkYN(scan);
+                  char searchMoreReply = func.checkYN2(scan);
                   if( searchMoreReply == 'y' ){
+
                      // DIRECTION
                      System.out.println("Choose new direction (N - north, S - south, E - east, W - west):");
                      this.direction = func.getDirection(scan) ;
 
-                     continue;
                   } else {
                      func.sayBye();
                      break;
@@ -113,10 +112,10 @@ public class Plane implements Flyable {
                }
 
             } else {
-               System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-");
-               System.out.println("        NOT ENOUGH FIGHT RESOURCES          ");
-               System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-");
-               func.getOperationDescription(targetDistance, targetArmor, ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
+               System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•");
+               System.out.println("              INSUFFICIENT FIGHT RESOURCES                ");
+               System.out.println("-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•-•");
+               func.getOperationDescription(targetDistance, targetArmor, this.ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
                func.sayReturning();
                break;
             }
@@ -125,22 +124,9 @@ public class Plane implements Flyable {
          // while
 
       }
-      else {
-         System.out.println("Plane returned to homeplace.");
-      }
-
-
-
-
-
-
-
-
-
-
-
-
+      else { System.out.println("Plane returned to homeplace."); }
 
    }
-
+   // fly
 }
+// class

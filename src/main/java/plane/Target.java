@@ -2,10 +2,10 @@ package plane;
 
 import java.util.Random;
 
-import static plane.Constants.TARGET_MIN_ARMOR ;
-import static plane.Constants.TARGET_MAX_ARMOR ;
-import static plane.Constants.TARGET_MIN_DISTANCE ;
-import static plane.Constants.TARGET_MAX_DISTANCE ;
+import static plane.Constants.MIN_TARGET_ARMOR;
+import static plane.Constants.MAX_TARGET_ARMOR;
+import static plane.Constants.MIN_TARGET_DISTANCE;
+import static plane.Constants.MAX_TARGET_DISTANCE;
 
 
 public class Target {
@@ -16,9 +16,9 @@ public class Target {
    public Target(char loc) {
       Random rnd = new Random() ;
 
-      distance = rnd.nextInt((TARGET_MAX_DISTANCE - TARGET_MIN_DISTANCE)+1) + TARGET_MIN_DISTANCE ;
-//      armor = rnd.nextInt((TARGET_MAX_ARMOR - TARGET_MIN_ARMOR)+1) + TARGET_MIN_ARMOR ;
-      armor = 50 ;
+      distance = rnd.nextInt((MAX_TARGET_DISTANCE - MIN_TARGET_DISTANCE)+1) + MIN_TARGET_DISTANCE;
+      armor = rnd.nextInt((MAX_TARGET_ARMOR - MIN_TARGET_ARMOR)+1) + MIN_TARGET_ARMOR;
+//      armor = 50 ;
    }
 
    public int getDistance() {

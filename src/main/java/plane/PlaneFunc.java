@@ -3,23 +3,7 @@ package plane;
 import java.util.Random;
 import java.util.Scanner;
 
-import static plane.Constants.PLANE_WEIGHT ;
-import static plane.Constants.MIN_STEALTH_TIME ;
-import static plane.Constants.MAX_STEALTH_TIME ;
-import static plane.Constants.PILOT_WEIGHT ;
-import static plane.Constants.ENGINE_WEIGHT ;
-import static plane.Constants.CHASSIS_WEIGHT ;
-import static plane.Constants.CAB_WEIGHT ;
-import static plane.Constants.BULLET_WEIGHT ;
-import static plane.Constants.MAX_ROCKETS ;
-import static plane.Constants.MIN_ROCKETS ;
-import static plane.Constants.MAX_BULLETS ;
-import static plane.Constants.MIN_BULLETS ;
-import static plane.Constants.ROCKET_WEIGHT ;
-import static plane.Constants.ROCKET_KOF ;
-import static plane.Constants.SHOTGUN_WEIGHT ;
-
-
+import static plane.Constants.*;
 
 
 public class PlaneFunc {
@@ -45,12 +29,9 @@ public class PlaneFunc {
    }
 
 
-
-   public double getPlaneWeight(String min_max){
+   public double getPlaneWeight(String min_max, Ammo ammo){
 
       double totalWeight = 0 ;
-
-      Ammo ammo = new Ammo() ;
 
       if(min_max.equalsIgnoreCase("max")){
          // max (only for testing purposes)
@@ -64,6 +45,11 @@ public class PlaneFunc {
          // random
          totalWeight =  PLANE_WEIGHT + CAB_WEIGHT + PILOT_WEIGHT + CHASSIS_WEIGHT + ENGINE_WEIGHT + SHOTGUN_WEIGHT +
              (ROCKET_WEIGHT * ammo.getRocketsCount()) + (BULLET_WEIGHT * ammo.getBulletsCount()) ;
+
+//         System.out.println("Weights: plane(" + PLANE_WEIGHT + "), cab(" + CAB_WEIGHT + "), pilot(" + PILOT_WEIGHT + "), chassis(" + CHASSIS_WEIGHT
+//             + "), engine(" + ENGINE_WEIGHT + "), shotgun(" + SHOTGUN_WEIGHT + "), \nrockets(" + ammo.getRocketsCount() + "*"+ROCKET_WEIGHT + "=" + (ROCKET_WEIGHT * ammo.getRocketsCount()) + "), "
+//             + "bullets(" + ammo.getBulletsCount() + "*" + BULLET_WEIGHT + "=" + (BULLET_WEIGHT * ammo.getBulletsCount()) + ") "
+//         );
       }
       return totalWeight ;
    }
@@ -72,8 +58,8 @@ public class PlaneFunc {
    public int[] getFlightParams( double totalWeight ){
 
       int[] arr = new int[2] ;
-//      int plusKm = 1000 ;
-      int plusKm = 8000 ; // TEST. To make Stealth appear faster
+      int plusKm = 1000 ;
+//      int plusKm = 6000 ; // TEST. To make Stealth appear faster
       Random rnd = new Random() ;
 
       if(totalWeight <= 11993){
@@ -97,8 +83,8 @@ public class PlaneFunc {
 
 
    public void getOperationDescription( int targetDistance, int targetArmor, Ammo ammo, double totalFirePotential, double rndPlaneWeight, int flightHight, int flightRange ){
-      System.out.print("Target: Distance (300-1500): " + targetDistance + " km, ");
-      System.out.println("Armor (260-680): " + targetArmor + " FP \n-------------------------------------------------------------");
+      System.out.print("Target: Distance (" + MIN_TARGET_DISTANCE + "-" + MAX_TARGET_DISTANCE + "): " + targetDistance + " km, ");
+      System.out.println("Armor (" + MIN_TARGET_ARMOR + "-" + MAX_TARGET_ARMOR + "): " + targetArmor + " FP \n-------------------------------------------------------------");
 
       String out = "rockets: " + ammo.getRocketsCount() + " ( = " + ammo.getRocketsCount() * ROCKET_KOF + " blts), " +
           "bullets: " + ammo.getBulletsCount()  + ", TOTAL FIRE potential: " + totalFirePotential + " FP";
@@ -109,7 +95,7 @@ public class PlaneFunc {
    }
 
 
-   public void processOperation(Ammo ammo, double totalFirePotential, int targetArmor, int flightRange, int targetDistance){
+   public void processOperation(Ammo ammo, double totalFirePotential, int targetArmor, int flightRange, int targetDistance, Plane pl){
       if( totalFirePotential < targetArmor  ){
          System.out.print("Target is too strong! ");
          if( flightRange >= targetDistance*2 ){
@@ -123,22 +109,16 @@ public class PlaneFunc {
             System.out.println("TARGET DESTROYED! But plane had NOT came back... Lacked " + (targetDistance*2-flightRange) + " km" );
 
             // take needed ammo amount away
-//            this.useAmmo(ammo) ;
-            System.out.println("take needed ammo amount away 1");
-//            ammo.setRocketsCount(0);
-//            ammo.setBulletsCount(51);
-            this.useAmmo(targetArmor, ammo);
-
-         } else if( flightRange > targetDistance*2 ){
+            this.useAmmo( targetArmor, ammo );
+            this.useRange( pl, targetDistance );
+         }
+         else if( flightRange > targetDistance*2 ){
             this.stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
             System.out.println("TARGET DESTROYED!");
 
             // take needed ammo amount away
-            System.out.println("take needed ammo amount away 2");
-//            ammo.setRocketsCount(0);
-//            ammo.setBulletsCount(51);
-            this.useAmmo(targetArmor, ammo);
-
+            this.useAmmo( targetArmor, ammo );
+            this.useRange( pl, targetDistance );
          }
          else {
             System.out.println("Target could be destroyed, but plane's lacking of flight resources... Cancel operation.");
@@ -147,35 +127,72 @@ public class PlaneFunc {
    }
 
 
-//   public double useAmmo( int targetArmor, Ammo ammo ){
    public void useAmmo( int targetArmor, Ammo ammo ){
       // 260-680 (Armor min-max)
       int neededRockets = (int) Math.round(targetArmor/ROCKET_KOF - 0.5) ;
-      System.out.println("neededRockets: " + neededRockets);
-      System.out.println("targetArmor: " + targetArmor);
+      double targetArmorRemainder = 0 ;
+      int rCount = (int)ammo.getRocketsCount() ;
+      int bCount = (int)ammo.getBulletsCount() ;
 
-//      if( targetArmor >= neededRockets * ROCKET_KOF ){
-      if( targetArmor >= ammo.getRocketsCount() * ROCKET_KOF ){
-         ammo.setRocketsCount(999);
-      } else if( targetArmor < neededRockets * ROCKET_KOF ){
-         ammo.setRocketsCount( ammo.getRocketsCount() - neededRockets );
+      if( rCount > 0 ) {
+         if ( targetArmor >= (rCount * ROCKET_KOF) ) {
+            ammo.setRocketsCount(0);
+            targetArmorRemainder = targetArmor - rCount * ROCKET_KOF;
+            ammo.setBulletsCount(bCount - targetArmorRemainder);
+            neededRockets = rCount;
+         } else if(targetArmor < (rCount * ROCKET_KOF)) {
+            ammo.setRocketsCount(rCount - neededRockets);
+            targetArmorRemainder = targetArmor - neededRockets * ROCKET_KOF;
+            ammo.setBulletsCount(bCount - targetArmorRemainder);
+         }
       }
-      double targetArmorRemainder = targetArmor - ammo.getRocketsCount() * ROCKET_KOF;
+      else if (rCount == 0) {
+         neededRockets = 0;
+         if (targetArmor >= bCount) {
+            ammo.setBulletsCount(0);
+         } else {
+            targetArmorRemainder = targetArmor - neededRockets * ROCKET_KOF;
+            ammo.setBulletsCount(bCount - targetArmorRemainder);
+         }
+      }
 
-      ammo.setBulletsCount( ammo.getBulletsCount() - targetArmorRemainder );
-
+      // info
+      System.out.print("RKTS used/left: " + (neededRockets) + "/" + (int)ammo.getRocketsCount() + ", " );
+      System.out.print("BLTS used/left: " + (int) targetArmorRemainder  + "/" + (int)ammo.getBulletsCount() + ", ");
    }
 
 
-   public char checkYN( Scanner scan ){
+   public void useRange(Plane pl, int targetDistance){
+      int left = pl.getFlightRange() - targetDistance ;
+      pl.setFlightRange( left );
+      System.out.println("FLIGHT used/left: " + targetDistance  + "/" + left + ", ");
+   }
+
+
+   public String checkYN( Scanner scan ){
+      String reply = "" ;
+      boolean is = false;
+      reply = scan.nextLine() ;
+      do{
+         reply = scan.nextLine() ;
+         switch(reply.toLowerCase()){
+            case "y": case "n":
+               is = true ; break;
+            default: System.out.println("Wrong choice. Might be Y or N: ");
+         }
+      } while (!is);
+      return reply ;
+   }
+
+
+   public char checkYN2( Scanner scan ){
       char reply ;
       boolean is = false;
       do{
          reply = scan.next().charAt(0) ;
-         if( Character.toLowerCase(reply) == 'y' || Character.toLowerCase(reply) == 'n' ){
-            is = true ;
-         } else {
-            System.out.println("Wrong choice. Might be Y or N: ");
+         switch( Character.toLowerCase(reply) ){
+            case 'y': case 'n': is = true ; break;
+            default: System.out.println("Wrong choice. Might be Y or N: ");
          }
       } while (!is);
       return reply ;
@@ -191,9 +208,7 @@ public class PlaneFunc {
             case 'n' :case 's' :case 'e':case 'w':
                is = true ;
                break;
-            default:
-               System.out.println("Choose correct direction: ");
-               is = false;
+            default: System.out.println("Choose correct direction: ");
          }
       } while ( !is ) ;
       return direction ;
@@ -213,11 +228,6 @@ public class PlaneFunc {
       } while ( !isTarget ) ;
       return target ;
    }
-
-//   public Target getTargetObj( char tgt ){
-//      Target targetObj = new Target( tgt ) ;
-//      return new Target( tgt ) ;
-//   }
 
 
    public boolean checkFightResources( Plane pl, Target target ){
@@ -240,11 +250,6 @@ public class PlaneFunc {
       System.out.println( "Stealth was active for: " + ( (double)(end_time - start_time)/1000 ) + " sec. (1.5 - 3.4) \n>-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->--> \n" );
    }
 
-
-   public void sayBye(){
-      System.out.println("Ok, see ya... :)");
-   }
-   public void sayReturning(){
-      System.out.println("Plane returns back home");
-   }
+   public void sayBye(){ System.out.println("Ok, see ya."); }
+   public void sayReturning(){ System.out.println("Plane returns back home (suppose it's so...)"); }
 }
