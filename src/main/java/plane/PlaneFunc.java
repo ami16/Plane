@@ -247,9 +247,23 @@ public class PlaneFunc {
       }
       long end_time = System.currentTimeMillis();
 
-      System.out.println( "Stealth was active for: " + ( (double)(end_time - start_time)/1000 ) + " sec. (1.5 - 3.4) \n>-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->--> \n" );
+      System.out.println( "Stealth was active for: " + ( (double)(end_time - start_time)/1000 ) + " sec. ("
+          + ((double)MIN_STEALTH_TIME /1000) + " - " + ((double)MAX_STEALTH_TIME/1000) + ") \n>-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->-->--> \n" );
    }
 
    public void sayBye(){ System.out.println("Ok, see ya."); }
    public void sayReturning(){ System.out.println("Plane returns back home (suppose it's so...)"); }
+
+
+   public void setHomeDistance( char direction, int targetDistance, Plane pl ){
+//      pl.setHomeDistance(1500);
+//      System.out.println("homeDistance: " + pl.getHomeDistance());
+//      int axisN, axisE, axisS, axisW ;
+      switch ( Character.toLowerCase(direction) ){
+         case 'w': pl.setAxisW( pl.getAxisW() + targetDistance ); break;
+         case 'n': pl.setAxisN( pl.getAxisN() + targetDistance ); break;
+         case 'e': pl.setAxisE( pl.getAxisE() + targetDistance ); break;
+         case 's': pl.setAxisS( pl.getAxisS() + targetDistance ); break;
+      }
+   }
 }

@@ -11,18 +11,29 @@ public class Plane implements Flyable {
    private char direction ;
    private boolean inAction = false ;
    private Ammo ammo ;
+   private int homeDistance = 0 ;
+   private int axisN ;
+   private int axisE ;
+   private int axisS ;
+   private int axisW ;
 
    public Plane() { }
 
    public double  getTotalFirePotential() { return totalFirePotential; }
    public int     getFlightRange() { return flightRange; }
    public void    setFlightRange(int flightRange) { this.flightRange = flightRange; }
+   public int     getHomeDistance() { return homeDistance; }
+   public void    setHomeDistance(int homeDistance) { this.homeDistance = homeDistance; }
 
-//   public int     getFlightHeight() { return flightHeight; }
-//   public char    getDirection() { return direction; }
-//   public double  getPlaneWeight() { return planeWeight; }
-//   public void    setAmmoBullets(int bullets) { this.ammo.setBulletsCount(bullets); }
-//   public void    setAmmoRockets(int rockets) { this.ammo.setRocketsCount(rockets); }
+   public int getAxisN() { return axisN; }
+   public int getAxisE() { return axisE; }
+   public int getAxisS() { return axisS; }
+   public int getAxisW() { return axisW; }
+
+   public void setAxisN(int axisN) { this.axisN = axisN; }
+   public void setAxisE(int axisE) { this.axisE = axisE; }
+   public void setAxisS(int axisS) { this.axisS = axisS; }
+   public void setAxisW(int axisW) { this.axisW = axisW; }
 
 
    public void fly(){
@@ -38,7 +49,6 @@ public class Plane implements Flyable {
       // DIRECTION
       System.out.println("Choose direction (N - north, S - south, E - east, W - west):");
       this.direction = func.getDirection(scan) ;
-
 
       // Search 4 TARGET?
       System.out.println("Search for target? (y/n) ");
@@ -79,14 +89,16 @@ public class Plane implements Flyable {
                // Operation Description
                func.getOperationDescription(targetDistance, targetArmor, this.ammo, this.totalFirePotential, this.planeWeight, this.flightHeight, this.flightRange);
 
-               System.out.println("Plain's ready to strike. Attack? (y/n)");
                // Y/N
+               System.out.println("Plain's ready for attack. Proceed? (y/n)");
                String attackReply = func.checkYN(scan).trim();
 
                // YES, ATTACK!
                if (attackReply.equalsIgnoreCase("y") ) {
                   // Operation Process
                   func.processOperation(this.ammo, this.totalFirePotential, targetArmor, this.flightRange, targetDistance, this);
+                  func.setHomeDistance( this.direction, targetDistance, this );
+                  System.out.println("CALLED FROM PLANE homeDistance: " + this.getHomeDistance() );
 
                   this.inAction = true ;
 
