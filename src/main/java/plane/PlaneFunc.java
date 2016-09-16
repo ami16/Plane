@@ -82,7 +82,16 @@ public class PlaneFunc {
    }
 
 
-   public void getOperationDescription( int targetDistance, int targetArmor, Ammo ammo, double totalFirePotential, double rndPlaneWeight, int flightHight, int flightRange ){
+//   public void getOperationDescription( int targetDistance, int targetArmor, Ammo ammo, double totalFirePotential, double rndPlaneWeight, int flightHight, int flightRange ){
+   public void getOperationDescription( Plane pl, Ammo ammo, Target tgt ){
+
+      int targetDistance = tgt.getDistance(),
+          targetArmor = tgt.getArmor() ,
+          flightHight = pl.getFlightHeight(),
+          flightRange = pl.getFlightRange();
+      double totalFirePotential = pl.getTotalFirePotential(),
+          rndPlaneWeight = pl.getPlaneWeight() ;
+
       System.out.print("Target: Distance (" + MIN_TARGET_DISTANCE + "-" + MAX_TARGET_DISTANCE + "): " + targetDistance + " km, ");
       System.out.println("Armor (" + MIN_TARGET_ARMOR + "-" + MAX_TARGET_ARMOR + "): " + targetArmor + " FP \n-------------------------------------------------------------");
 
@@ -95,40 +104,50 @@ public class PlaneFunc {
    }
 
 
-   public void processOperation(Ammo ammo, double totalFirePotential, int targetArmor, int flightRange, int targetDistance, Plane pl){
+   public boolean processOperation(Plane pl, Ammo ammo, Target tgt){
+
+      double totalFirePotential = pl.getTotalFirePotential() ;
+      int targetArmor = tgt.getArmor(),
+          targetDistance = tgt.getDistance(),
+          flightRange = pl.getFlightRange() ;
+
+
       if( totalFirePotential < targetArmor  ){
-         System.out.print("Target is too strong! ");
+         System.out.print("<< Target is too strong! ");
          if( flightRange >= targetDistance*2 ){
-            System.out.print("Turning back. ");
+            System.out.print("Turning back. >>");
          } else {
-            System.out.println("And there would be no way to turn back. Quit operation.");
+            System.out.println("<< And there would be no way to turn back. Quit operation. >>");
          }
       } else if( totalFirePotential > targetArmor ){
 
          if( flightRange > targetDistance && flightRange < targetDistance*2){
-            System.out.println("TARGET DESTROYED! But plane had NOT came back... Lacked " + (targetDistance*2-flightRange) + " km" );
-
+            System.out.println("<< TARGET DESTROYED! But plane had NOT came back... Lacked " + (targetDistance*2-flightRange) + " km >>" );
+            pl.setPlaneSaved(false);
+//            return false;
             // take needed ammo amount away
-            this.useAmmo( targetArmor, ammo );
-            this.useRange( pl, targetDistance );
+            useAmmo( targetArmor, ammo );
+            useRange( pl, targetDistance );
          }
          else if( flightRange > targetDistance*2 ){
-            this.stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
-            System.out.println("TARGET DESTROYED!");
+            stealth(MIN_STEALTH_TIME, MAX_STEALTH_TIME);
+            System.out.println("<< TARGET DESTROYED! >>");
 
             // take needed ammo amount away
-            this.useAmmo( targetArmor, ammo );
-            this.useRange( pl, targetDistance );
+            useAmmo( targetArmor, ammo );
+            useRange( pl, targetDistance );
          }
          else {
-            System.out.println("Target could be destroyed, but plane's lacking of flight resources... Cancel operation.");
+            System.out.println("<< Target could be destroyed, but plane's lacking of flight resources... Cancel operation. >>");
          }
       }
+
+      return true;
    }
 
 
    public void useAmmo( int targetArmor, Ammo ammo ){
-      // 260-680 (Armor min-max)
+
       int neededRockets = (int) Math.round(targetArmor/ROCKET_KOF - 0.5) ;
       double targetArmorRemainder = 0 ;
       int rCount = (int)ammo.getRocketsCount() ;
@@ -176,8 +195,7 @@ public class PlaneFunc {
       do{
          reply = scan.nextLine() ;
          switch(reply.toLowerCase()){
-            case "y": case "n":
-               is = true ; break;
+            case "y": case "n": is = true ; break;
             default: System.out.println("Wrong choice. Might be Y or N: ");
          }
       } while (!is);
